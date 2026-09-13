@@ -4,8 +4,7 @@
   "description": "Procrastination Police — Anti-Work Alarm Division ('AYOOO SAYIP OP!')",
   "main": "index.html",
   "scripts": {
-    "start": "npx serve .",
-    "build": "echo 'Static site ready for Vercel deployment'"
+    "start": "npx serve ."
   },
   "keywords": [
     "procrastination-police",
