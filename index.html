@@ -3,273 +3,354 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Procrastination Police — Reverse Break Enforcer</title>
-  <!-- Google Fonts -->
+  <title>PROCRASTINATION POLICE — Anti-Work Alarm ("AYOOO SAYIP OP!")</title>
+  <meta name="description" content="Official Anti-Work Alarm Division! Working is strictly forbidden — keypresses or mouse clicks will trigger the AYOOO SAYIP OP! alarm sound!">
+  <meta name="theme-color" content="#ff3131">
+
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PROCRASTINATION POLICE — Anti-Work Alarm">
+  <meta property="og:description" content="Working is strictly forbidden! Put your hands away from the keyboard or face the AYOOO SAYIP OP! alarm sound!">
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:title" content="PROCRASTINATION POLICE — Anti-Work Alarm">
+  <meta property="twitter:description" content="Working is strictly forbidden! Put your hands away from the keyboard or face the AYOOO SAYIP OP! alarm sound!">
+
+  <!-- SVG Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-5.45 9-12V7l-9-5z' fill='%23ff3131'/><path d='M12 6l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6L12 6z' fill='%23ffde59'/></svg>">
+
+  <!-- Google Fonts: Bangers & Comic Neue -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <!-- Police Lightbar Siren Overlay (Active in Level 3 & 4) -->
+<body class="comic-theme">
+  <!-- HTML5 Embedded Audio Element for Maximum Browser Compatibility -->
+  <audio id="ayoooAudio" src="ayooo-sayip-op.mp3" preload="auto"></audio>
+
+  <!-- START OVERLAY FOR BROWSER AUDIO PERMISSION UNLOCK -->
+  <div id="audioStartOverlay" class="start-overlay">
+    <div class="start-card comic-box-heavy">
+      <div class="police-badge-icon comic-bounce">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#000" stroke-width="2.5">
+          <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-5.45 9-12V7l-9-5z" fill="#ff3131"/>
+          <path d="M12 6l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6L12 6z" fill="#ffde59" stroke="#000" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <h1 class="comic-modal-title">PROCRASTINATION POLICE!</h1>
+      <p class="start-desc">Click below to activate the Anti-Work Audio Sensor & Sound Effects!</p>
+      <button id="activateSensorBtn" class="comic-btn primary-comic-btn start-btn">
+        🚨 CLICK TO ACTIVATE "AYOOO SAYIP OP!" ALARM 🚨
+      </button>
+    </div>
+  </div>
+
+  <!-- Police Lightbar Siren Overlay (Active on Work Detection) -->
   <div id="sirenOverlay" class="siren-overlay hidden">
     <div class="light light-blue"></div>
     <div class="light light-red"></div>
+    <div class="comic-siren-text" id="sirenSoundText">AYOOO SAYIP OP!</div>
   </div>
 
   <div class="app-container">
     <!-- Top Header -->
-    <header class="top-bar">
+    <header class="top-bar comic-box">
       <div class="brand">
-        <div class="police-badge-icon">
-          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-5.45 9-12V7l-9-5z" fill="url(#badgeGrad)" stroke="#fbbf24"/>
-            <path d="M12 6l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6L12 6z" fill="#fbbf24"/>
-            <defs>
-              <linearGradient id="badgeGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#1e293b"/>
-                <stop offset="100%" stop-color="#0f172a"/>
-              </linearGradient>
-            </defs>
+        <div class="police-badge-icon comic-bounce">
+          <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#000" stroke-width="2.5">
+            <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-5.45 9-12V7l-9-5z" fill="#ff3131"/>
+            <path d="M12 6l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6L12 6z" fill="#ffde59" stroke="#000" stroke-width="1.5"/>
           </svg>
         </div>
         <div class="brand-text">
-          <h1>PROCRASTINATION POLICE</h1>
-          <span class="subtitle">OVERWORK & BREAK ENFORCEMENT DIVISION</span>
+          <h1 class="comic-title">PROCRASTINATION POLICE!</h1>
+          <span class="subtitle-tag">ANTI-WORK ALARM DIVISION ("AYOOO SAYIP OP!")</span>
         </div>
       </div>
 
       <div class="header-controls">
-        <div class="mode-switch-container">
-          <span class="mode-label">Speed Mode:</span>
-          <button id="toggleModeBtn" class="pill-btn mode-btn" title="Toggle between Demo (Seconds) and Real (Minutes) threshold tracking">
-            <span class="dot demo-active"></span>
-            <span id="modeText">Demo Mode (Seconds)</span>
-          </button>
-        </div>
+        <button id="testAlarmBtn" class="comic-btn warning-comic-btn" title="Simulate Work Click / Audio Test">
+          🔊 PLAY "AYOOO SAYIP OP!"
+        </button>
 
-        <button id="soundToggleBtn" class="icon-btn" title="Toggle Audio Siren & Warnings">
-          <svg id="soundOnIcon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <button id="soundToggleBtn" class="comic-icon-btn" title="Toggle Audio Siren & Warnings">
+          <svg id="soundOnIcon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#000" stroke-width="2.5">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="#38b6ff"/>
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
           </svg>
-          <svg id="soundOffIcon" class="hidden" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <svg id="soundOffIcon" class="hidden" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#000" stroke-width="2.5">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="#ff5757"/>
             <line x1="23" y1="9" x2="17" y2="15"/>
             <line x1="17" y1="9" x2="23" y2="15"/>
           </svg>
         </button>
 
-        <button id="takeBreakBtn" class="pill-btn primary-btn">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
-          </svg>
-          Take a Break Now
+        <button id="resetProcrastinationBtn" class="comic-btn primary-comic-btn">
+          😴 STOP WORKING & REST
         </button>
       </div>
     </header>
 
     <!-- Main Dashboard Grid -->
     <main class="dashboard-grid">
-      <!-- Left Column: Officer Mascot & Dialogue -->
-      <section class="officer-card glass-panel">
+      <!-- Left Column: Officer Mascot & Speech -->
+      <section class="officer-card comic-box">
+        <div class="comic-badge-banner">OFFICER SAYIP OP</div>
+        
         <div class="officer-avatar-container">
           <div id="officerHalo" class="officer-halo level-1-glow"></div>
-          <svg class="officer-svg" viewBox="0 0 120 120" width="100" height="100">
-            <!-- Officer Cap -->
-            <path d="M 30 45 C 30 20, 90 20, 90 45 Z" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
-            <rect x="25" y="42" width="70" height="7" rx="3" fill="#0f172a"/>
-            <!-- Cap Visor -->
-            <path d="M 23 48 Q 60 55 97 48 Q 60 52 23 48 Z" fill="#020617"/>
-            <!-- Gold Badge on Cap -->
-            <polygon points="60,25 64,33 72,33 66,38 68,46 60,41 52,46 54,38 48,33 56,33" fill="#fbbf24"/>
+          <!-- Comic Police Officer Avatar SVG -->
+          <svg class="officer-svg" viewBox="0 0 120 120" width="110" height="110">
+            <!-- Cap -->
+            <path d="M 25 45 C 25 15, 95 15, 95 45 Z" fill="#ff3131" stroke="#000" stroke-width="3"/>
+            <rect x="20" y="42" width="80" height="8" rx="4" fill="#000"/>
+            <path d="M 18 48 Q 60 56 102 48 Q 60 53 18 48 Z" fill="#000"/>
+            <!-- Gold Badge -->
+            <polygon points="60,22 65,31 74,31 67,36 70,45 60,39 50,45 53,36 46,31 55,31" fill="#ffde59" stroke="#000" stroke-width="1.5"/>
             <!-- Head -->
-            <circle cx="60" cy="65" r="20" fill="#f87171"/>
-            <!-- Sunglasses / Aviators -->
-            <rect x="44" y="58" width="14" height="10" rx="3" fill="#0f172a" stroke="#fbbf24" stroke-width="1.5"/>
-            <rect x="62" y="58" width="14" height="10" rx="3" fill="#0f172a" stroke="#fbbf24" stroke-width="1.5"/>
-            <line x1="58" y1="62" x2="62" y2="62" stroke="#fbbf24" stroke-width="2"/>
-            <!-- Mustache -->
-            <path d="M 48 74 Q 60 72 72 74 Q 60 80 48 74 Z" fill="#1e293b"/>
-            <!-- Shoulders / Uniform -->
-            <path d="M 25 110 Q 60 85 95 110 L 95 120 L 25 120 Z" fill="#1e3a8a"/>
-            <polygon points="60,88 64,95 56,95" fill="#fbbf24"/>
+            <circle cx="60" cy="66" r="22" fill="#ffde59" stroke="#000" stroke-width="3"/>
+            <!-- Aviator Sunglasses -->
+            <rect x="42" y="58" width="16" height="12" rx="3" fill="#000"/>
+            <rect x="62" y="58" width="16" height="12" rx="3" fill="#000"/>
+            <line x1="58" y1="62" x2="62" y2="62" stroke="#000" stroke-width="3"/>
+            <path d="M 45 60 L 52 68" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            <path d="M 65 60 L 72 68" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            <!-- Mustache / Mouth -->
+            <path d="M 46 78 Q 60 70 74 78" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+            <!-- Uniform -->
+            <path d="M 20 110 Q 60 82 100 110 L 100 120 L 20 120 Z" fill="#004aad" stroke="#000" stroke-width="3"/>
+            <polygon points="60,86 66,96 54,96" fill="#ffde59" stroke="#000" stroke-width="1.5"/>
           </svg>
         </div>
 
         <div class="officer-info">
-          <div class="officer-badge-rank">
-            <span class="rank">SERGEANT BREAK-WELL</span>
-            <span id="activityStatusBadge" class="status-chip active">Work Session Active</span>
-          </div>
-          <div id="speechBubble" class="speech-bubble">
-            <p id="officerSpeech">"Officer on duty! I am monitoring your active work duration. Stay focused, but don't overwork!"</p>
+          <div class="status-chip active" id="activityStatusBadge">PEACEFUL PROCRASTINATING</div>
+
+          <!-- Dynamic Comic Speech Bubble -->
+          <div id="speechBubble" class="comic-speech-bubble">
+            <div class="speech-tail"></div>
+            <p id="officerSpeech">"DO NOT WORK! Any keypress or mouse click will immediately trigger the 'AYOOO SAYIP OP!' alarm!"</p>
           </div>
         </div>
       </section>
 
-      <!-- Center Column: Continuous Work Radial Gauge -->
-      <section class="gauge-card glass-panel">
+      <!-- Center Column: Work Alarm Sensor & Radial Gauge -->
+      <section class="gauge-card comic-box">
         <div class="gauge-header">
-          <h2>CONTINUOUS WORK MONITOR</h2>
-          <span id="levelBadge" class="level-badge level-1">🟢 LEVEL 1 — PRODUCTIVE</span>
+          <h2 class="comic-heading">WORK DETECTION SENSOR</h2>
+          <span id="levelBadge" class="comic-level-badge level-1">🟢 LEVEL 1 — SAFE & RESTING</span>
         </div>
 
         <div class="radial-gauge-container">
           <svg class="gauge-svg" viewBox="0 0 200 200">
-            <!-- Background Track -->
             <circle class="gauge-bg" cx="100" cy="100" r="80"/>
-            <!-- Progress Arc -->
             <circle id="gaugeProgress" class="gauge-progress level-1-stroke" cx="100" cy="100" r="80"/>
           </svg>
 
           <div class="gauge-readout">
             <div class="time-display">
-              <span id="workMinutes">00</span><span class="unit">m</span>
-              <span id="workSeconds">00</span><span class="unit">s</span>
+              <span id="workMinutes">00</span><span class="unit">M</span>
+              <span id="workSeconds">00</span><span class="unit">S</span>
             </div>
-            <div class="gauge-subtitle">Continuous Active Work</div>
-            <div id="idleNotice" class="idle-notice hidden">⚡ User Resting / Idle</div>
+            <div class="gauge-subtitle">ILLEGAL WORK DURATION</div>
+            <div id="idleNotice" class="idle-notice text-green">🟢 NO WORK DETECTED (SAFE)</div>
+          </div>
+
+          <!-- Comic Burst Sound Tag -->
+          <div id="comicBurstTag" class="comic-starburst">
+            <span id="burstText">SAFE!</span>
           </div>
         </div>
 
-        <div class="gauge-footer-stats">
+        <div class="gauge-footer-stats comic-subbox">
           <div class="stat-item">
-            <span class="stat-label">Activity Sensor</span>
-            <span id="activityStateText" class="stat-value text-green">Active Input Detected</span>
+            <div class="stat-label">INPUT SENSOR STATE</div>
+            <span id="activityStateText" class="stat-value text-green">RESTING (NO KEYS/CLICKS)</span>
           </div>
           <div class="stat-item">
-            <span class="stat-label">Next Escalation Level</span>
-            <span id="nextLevelCountdown" class="stat-value">In 02:00</span>
+            <div class="stat-label">TOTAL WORK ALARMS TRIGGERED</div>
+            <span id="alarmsTriggeredCount" class="stat-value text-red">0 ALARMS</span>
           </div>
         </div>
       </section>
 
-      <!-- Right Column: 4-Level Status Tracker -->
-      <section class="levels-card glass-panel">
-        <h3>OVERWORK ESCALATION MATRIX</h3>
-        <p class="matrix-desc">Monitoring continuous work duration to enforce healthy rest.</p>
+      <!-- Right Column: Anti-Work Escalation Matrix Cards -->
+      <section class="levels-card comic-box">
+        <h3 class="comic-heading">WORK DETECTION ESCALATION</h3>
+        <p class="matrix-desc">Working is strictly forbidden! Click or type to test!</p>
 
         <div class="levels-list">
-          <!-- Level 1 -->
           <div id="cardLevel1" class="level-card level-1 active">
             <div class="level-card-header">
               <span class="level-icon">🟢</span>
               <div class="level-title-group">
-                <h4>Level 1 — Productive</h4>
-                <span class="level-range" id="rangeL1">Active < 2 min continuous</span>
+                <h4>LEVEL 1 — SAFE & RESTING</h4>
+                <span class="level-range">User is idle / procrastinating</span>
               </div>
             </div>
-            <p class="level-card-desc">Healthy focus session. You are pacing well and active.</p>
+            <p class="level-card-desc">No keyboard or mouse activity. Officer is satisfied.</p>
           </div>
 
-          <!-- Level 2 -->
           <div id="cardLevel2" class="level-card level-2">
             <div class="level-card-header">
               <span class="level-icon">🟡</span>
               <div class="level-title-group">
-                <h4>Level 2 — Suspicious</h4>
-                <span class="level-range" id="rangeL2">Active 2–5 min continuous</span>
+                <h4>LEVEL 2 — WORK DETECTED!</h4>
+                <span class="level-range">Keypress or Mouse Click Registered</span>
               </div>
             </div>
-            <p class="level-card-desc">Suspicious continuous overwork! Eye strain building up.</p>
+            <p class="level-card-desc">Work attempt detected! Warning issued to user!</p>
           </div>
 
-          <!-- Level 3 -->
           <div id="cardLevel3" class="level-card level-3">
             <div class="level-card-header">
               <span class="level-icon">🟠</span>
               <div class="level-title-group">
-                <h4>Level 3 — Procrastinating on Breaks</h4>
-                <span class="level-range" id="rangeL3">Active 5–10 min + Siren Warning</span>
+                <h4>LEVEL 3 — "AYOOO SAYIP OP!" ALARM</h4>
+                <span class="level-range">Continuous Work 3+ Seconds</span>
               </div>
             </div>
-            <p class="level-card-desc">🚨 WARNING SIREN ACTIVE! You are resisting necessary rest.</p>
+            <p class="level-card-desc">🚨 ALARM BLASTING! "AYOOO SAYIP OP!" audio playing!</p>
           </div>
 
-          <!-- Level 4 -->
           <div id="cardLevel4" class="level-card level-4">
             <div class="level-card-header">
               <span class="level-icon">🔴</span>
               <div class="level-title-group">
-                <h4>Level 4 — Officer Intervention</h4>
-                <span class="level-range" id="rangeL4">Active 10+ min continuous</span>
+                <h4>LEVEL 4 — POLICE BUST LOCKDOWN</h4>
+                <span class="level-range">Continuous Work 8+ Seconds</span>
               </div>
             </div>
-            <p class="level-card-desc">👮‍♂️ MANDATORY OVERWORK INTERVENTION! Full screen lockdown.</p>
+            <p class="level-card-desc">👮‍♂️ MANDATORY ANTI-WORK LOCKDOWN! Stop working immediately!</p>
           </div>
         </div>
       </section>
     </main>
 
-    <!-- Bottom Stats & Activity Log -->
-    <footer class="bottom-panel glass-panel">
+    <!-- Comic Strip Section -->
+    <section class="comic-strip-container comic-box">
+      <h3 class="comic-heading">OFFICER SAYIP OP'S ANTI-WORK COMIC</h3>
+      
+      <div class="comic-panels-grid">
+        <!-- Panel 1 -->
+        <div class="comic-panel panel-1">
+          <div class="panel-tag">PANEL 1: PEACEFUL REST</div>
+          <div class="panel-art">
+            <div class="comic-caption">"SAFE!"</div>
+            <svg viewBox="0 0 100 80" width="100%" height="70">
+              <circle cx="50" cy="35" r="16" fill="#ffde59" stroke="#000" stroke-width="2"/>
+              <path d="M 38 32 L 62 32" stroke="#000" stroke-width="4"/>
+              <path d="M 40 44 Q 50 50 60 44" fill="none" stroke="#000" stroke-width="2"/>
+              <text x="50" y="70" text-anchor="middle" font-family="Bangers" font-size="12" fill="#000">"No work detected!"</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Panel 2 -->
+        <div class="comic-panel panel-2">
+          <div class="panel-tag">PANEL 2: CLICK DETECTED!</div>
+          <div class="panel-art">
+            <div class="comic-caption yellow-cap">"CLICK! TYPE!"</div>
+            <svg viewBox="0 0 100 80" width="100%" height="70">
+              <circle cx="50" cy="35" r="16" fill="#ffde59" stroke="#000" stroke-width="2"/>
+              <path d="M 38 32 L 62 32" stroke="#000" stroke-width="4"/>
+              <path d="M 42 46 Q 50 40 58 46" fill="none" stroke="#000" stroke-width="2"/>
+              <text x="50" y="70" text-anchor="middle" font-family="Bangers" font-size="12" fill="#000">"Who typed that?!"</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Panel 3 -->
+        <div class="comic-panel panel-3">
+          <div class="panel-tag">PANEL 3: AUDIO ALARM</div>
+          <div class="panel-art">
+            <div class="comic-caption orange-cap">"AYOOO SAYIP OP!"</div>
+            <svg viewBox="0 0 100 80" width="100%" height="70">
+              <polygon points="50,5 60,25 80,20 68,35 85,50 62,50 60,70 45,55 25,65 35,45 15,35 35,28" fill="#ff3131" stroke="#000" stroke-width="2"/>
+              <text x="50" y="42" text-anchor="middle" font-family="Bangers" font-size="12" fill="#fff" stroke="#000" stroke-width="0.5">AYOOO SAYIP!</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Panel 4 -->
+        <div class="comic-panel panel-4">
+          <div class="panel-tag">PANEL 4: LOCKDOWN</div>
+          <div class="panel-art">
+            <div class="comic-caption red-cap">"STOP WORKING!"</div>
+            <svg viewBox="0 0 100 80" width="100%" height="70">
+              <rect x="35" y="20" width="30" height="25" rx="4" fill="#ff3131" stroke="#000" stroke-width="2"/>
+              <path d="M 42 20 C 42 10, 58 10, 58 20" fill="none" stroke="#000" stroke-width="3"/>
+              <text x="50" y="68" text-anchor="middle" font-family="Bangers" font-size="12" fill="#000">"Go back to sleep!"</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Stats Panel -->
+    <footer class="bottom-panel comic-box">
       <div class="stats-row">
-        <div class="summary-box">
-          <span class="box-number" id="totalWorkTime">00:00</span>
-          <span class="box-label">Total Work Today</span>
+        <div class="summary-box comic-subbox">
+          <span class="box-number" id="totalRestTime">00:00</span>
+          <span class="box-label">PEACEFUL REST TIME</span>
         </div>
-        <div class="summary-box">
-          <span class="box-number" id="breaksTakenCount">0</span>
-          <span class="box-label">Breaks Taken</span>
+        <div class="summary-box comic-subbox">
+          <span class="box-number" id="workAttemptsCount">0</span>
+          <span class="box-label">ILLEGAL WORK ATTEMPTS</span>
         </div>
-        <div class="summary-box">
-          <span class="box-number" id="interventionsCount">0</span>
-          <span class="box-label">Officer Interventions</span>
+        <div class="summary-box comic-subbox">
+          <span class="box-number" id="audioAlarmsPlayed">0</span>
+          <span class="box-label">"AYOOO SAYIP OP!" ALARMS</span>
         </div>
-        <div class="summary-box">
-          <span class="box-number" id="healthScore">100%</span>
-          <span class="box-label">Work/Break Balance</span>
+        <div class="summary-box comic-subbox">
+          <span class="box-number" id="procrastinationScore">100%</span>
+          <span class="box-label">PROCRASTINATION SCORE</span>
         </div>
       </div>
     </footer>
   </div>
 
-  <!-- LEVEL 4: OFFICER INTERVENTION FULLSCREEN OVERLAY -->
+  <!-- LEVEL 4: WORK LOCKDOWN OVERLAY MODAL -->
   <div id="officerInterventionModal" class="intervention-modal hidden">
     <div class="intervention-backdrop"></div>
-    <div class="intervention-content glass-panel-heavy">
+    <div class="intervention-content comic-box-heavy">
       <div class="police-siren-bar">
         <div class="bar-light red-flash"></div>
         <div class="bar-center">
-          <span class="police-badge-small">👮‍♂️ POLICE DEPT</span>
+          <span class="police-badge-small">👮‍♂️ POLICE WORK BUST!</span>
         </div>
         <div class="bar-light blue-flash"></div>
       </div>
 
       <div class="intervention-header">
-        <h2>🔴 LEVEL 4: OFFICER INTERVENTION</h2>
-        <p class="intervention-subtitle">MANDATORY BREAK ENFORCEMENT LOCKDOWN</p>
+        <h2 class="comic-modal-title">🔴 WORK LOCKDOWN! "AYOOO SAYIP OP!"</h2>
+        <p class="intervention-subtitle">YOU HAVE BEEN CAUGHT WORKING!</p>
       </div>
 
       <div class="intervention-body">
-        <div class="alert-banner">
-          <p><strong>OFFICER ORDER:</strong> You have been working continuously for <span id="modalWorkDuration">10 minutes</span> without taking a break!</p>
+        <div class="comic-alert-banner">
+          <p><strong>OFFICER SAYIP OP:</strong> Keyboard typing and mouse clicking detected! Working is forbidden! Put your hands up!</p>
         </div>
 
-        <div class="break-countdown-box">
-          <h3>MANDATORY REST COUNTDOWN</h3>
-          <div class="countdown-digits" id="modalBreakTimer">00:30</div>
-          <p class="timer-desc">Screen locked until rest period finishes to protect your health & focus.</p>
+        <div class="break-countdown-box comic-subbox">
+          <h3>MANDATORY PROCRASTINATION COUNTDOWN</h3>
+          <div class="countdown-digits" id="modalBreakTimer">00:15</div>
+          <p class="timer-desc">Screen locked until you stop touching the keyboard & mouse!</p>
         </div>
 
         <div class="stretch-tips">
-          <h4>💡 Mandatory Officer Stretch Protocol:</h4>
+          <h4>💡 MANDATORY PROCRASTINATION PROTOCOL:</h4>
           <ul>
-            <li>👀 <strong>20-20-20 Rule:</strong> Look at an object 20 feet away for 20 seconds.</li>
-            <li>🧘 <strong>Shoulder Rolls:</strong> Roll your shoulders back 5 times.</li>
-            <li>💧 <strong>Hydrate:</strong> Stand up and drink a glass of water now!</li>
+            <li>🛋️ <strong>Step Away:</strong> Move your hands 2 feet away from the keyboard!</li>
+            <li>🎧 <strong>Listen to Audio:</strong> "AYOOO SAYIP OP!" sound effect playing!</li>
+            <li>💤 <strong>Relax:</strong> Enjoy peaceful procrastination!</li>
           </ul>
         </div>
       </div>
 
       <div class="intervention-footer">
-        <button id="completeBreakBtn" class="pill-btn primary-btn large-btn" disabled>
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          <span id="completeBreakText">Complete Break (Locked: 00:30)</span>
+        <button id="completeBreakBtn" class="comic-btn primary-comic-btn large-btn">
+          😴 I PROMISE TO STOP WORKING & REST
         </button>
       </div>
     </div>

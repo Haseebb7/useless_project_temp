@@ -1,37 +1,30 @@
 /* ------------------------------------------------------------------
-   PROCRASTINATION POLICE — REVERSE BREAK ENFORCER (STYLES)
-   Theme: Dark Cyber Police Command Center with HSL tokens & Glassmorphism
+   PROCRASTINATION POLICE — ANTI-WORK ALARM EDITION ("AYOOO SAYIP OP!")
+   Style: Retro Comic Book, Vibrant Halftones, Heavy Ink Outlines & Pop Badges
 ------------------------------------------------------------------ */
 
 :root {
-  /* Color Tokens */
-  --bg-dark: #090d16;
-  --bg-card: rgba(15, 23, 42, 0.75);
-  --bg-card-border: rgba(255, 255, 255, 0.1);
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  
-  /* Police Brand Colors */
-  --police-blue: #2563eb;
-  --police-cyan: #38bdf8;
-  --accent-gold: #fbbf24;
+  /* Comic Pop Color Tokens */
+  --comic-yellow: #ffde59;
+  --comic-yellow-dark: #e5c100;
+  --comic-cyan: #38b6ff;
+  --comic-blue: #004aad;
+  --comic-red: #ff3131;
+  --comic-orange: #ff914d;
+  --comic-green: #00bf63;
+  --comic-bg-dark: #121826;
+  --comic-ink: #000000;
+  --comic-paper: #ffffff;
 
   /* Level Colors */
-  --level-1: #10b981; /* Emerald Green */
-  --level-1-glow: rgba(16, 185, 129, 0.4);
-  
-  --level-2: #f59e0b; /* Amber Yellow */
-  --level-2-glow: rgba(245, 158, 11, 0.4);
-  
-  --level-3: #f97316; /* Warning Orange */
-  --level-3-glow: rgba(249, 115, 22, 0.5);
-
-  --level-4: #ef4444; /* Emergency Red */
-  --level-4-glow: rgba(239, 68, 68, 0.6);
+  --level-1: #00bf63;
+  --level-2: #ffde59;
+  --level-3: #ff914d;
+  --level-4: #ff3131;
 
   /* Fonts */
-  --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-display: 'Space Grotesk', sans-serif;
+  --font-title: 'Bangers', cursive, sans-serif;
+  --font-body: 'Comic Neue', 'Fredoka', cursive, sans-serif;
 }
 
 * {
@@ -40,33 +33,82 @@
   padding: 0;
 }
 
-body {
-  font-family: var(--font-main);
-  background-color: var(--bg-dark);
+body.comic-theme {
+  font-family: var(--font-body);
+  font-weight: 700;
+  background-color: #ffde59;
+  /* Ben-Day Halftone Dot Pattern */
   background-image: 
-    radial-gradient(circle at 15% 20%, rgba(37, 99, 235, 0.12) 0%, transparent 45%),
-    radial-gradient(circle at 85% 80%, rgba(249, 115, 22, 0.1) 0%, transparent 45%),
-    radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.9) 0%, transparent 100%);
-  color: var(--text-main);
+    radial-gradient(#000 18%, transparent 19%),
+    radial-gradient(#000 18%, transparent 19%);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  color: var(--comic-ink);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  padding: 1rem;
 }
 
-/* Glassmorphism Panel */
-.glass-panel {
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--bg-card-border);
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* ------------------------------------------------------------------
+   START AUDIO PERMISSION OVERLAY
+------------------------------------------------------------------ */
+.start-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2000;
+  background: rgba(18, 24, 38, 0.95);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.glass-panel:hover {
-  border-color: rgba(255, 255, 255, 0.18);
+.start-card {
+  max-width: 500px;
+  width: 90%;
+  padding: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  animation: comic-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.start-desc {
+  font-size: 1.1rem;
+  color: var(--comic-ink);
+  font-family: var(--font-body);
+  font-weight: 700;
+}
+
+.start-btn {
+  font-size: 1.3rem;
+  padding: 1rem 1.75rem;
+  width: 100%;
+  justify-content: center;
+}
+
+/* ------------------------------------------------------------------
+   COMIC CONTAINERS & BOXES
+------------------------------------------------------------------ */
+.comic-box {
+  background: var(--comic-paper);
+  border: 4px solid var(--comic-ink);
+  border-radius: 18px;
+  box-shadow: 8px 8px 0px var(--comic-ink);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+}
+
+.comic-subbox {
+  background: #f8fafc;
+  border: 3px solid var(--comic-ink);
+  border-radius: 12px;
+  box-shadow: 4px 4px 0px var(--comic-ink);
 }
 
 .hidden {
@@ -85,49 +127,67 @@ body {
   pointer-events: none;
   z-index: 99;
   display: flex;
-  justify-content: space-between;
-  opacity: 0.8;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .siren-overlay .light {
-  width: 48vw;
+  position: absolute;
+  width: 60vw;
   height: 100vh;
-  opacity: 0.15;
-  filter: blur(60px);
+  opacity: 0.35;
+  filter: blur(40px);
 }
 
 .siren-overlay .light-blue {
-  background: #3b82f6;
-  animation: flash-blue 0.8s infinite alternate ease-in-out;
+  left: 0;
+  background: var(--comic-cyan);
+  animation: flash-blue 0.3s infinite alternate ease-in-out;
 }
 
 .siren-overlay .light-red {
-  background: #ef4444;
-  animation: flash-red 0.8s infinite alternate-reverse ease-in-out;
+  right: 0;
+  background: var(--comic-red);
+  animation: flash-red 0.3s infinite alternate-reverse ease-in-out;
+}
+
+.comic-siren-text {
+  position: relative;
+  z-index: 100;
+  font-family: var(--font-title);
+  font-size: 5.5rem;
+  color: var(--comic-yellow);
+  text-shadow: 6px 6px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000;
+  animation: bounce-text 0.3s infinite alternate;
+  letter-spacing: 0.05em;
+}
+
+@keyframes bounce-text {
+  0% { transform: scale(0.9) rotate(-4deg); }
+  100% { transform: scale(1.15) rotate(4deg); }
 }
 
 @keyframes flash-blue {
-  0% { opacity: 0.05; }
-  100% { opacity: 0.4; }
+  0% { opacity: 0.1; }
+  100% { opacity: 0.6; }
 }
 
 @keyframes flash-red {
-  0% { opacity: 0.4; }
-  100% { opacity: 0.05; }
+  0% { opacity: 0.6; }
+  100% { opacity: 0.1; }
 }
 
 /* ------------------------------------------------------------------
-   LAYOUT CONTAINER
+   APP CONTAINER
 ------------------------------------------------------------------ */
 .app-container {
   max-width: 1380px;
   margin: 0 auto;
-  padding: 1.5rem;
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  flex-grow: 1;
 }
 
 /* ------------------------------------------------------------------
@@ -137,11 +197,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid var(--bg-card-border);
-  border-radius: 16px;
-  backdrop-filter: blur(12px);
+  padding: 1.2rem 1.75rem;
+  background: var(--comic-paper);
 }
 
 .brand {
@@ -151,28 +208,38 @@ body {
 }
 
 .police-badge-icon {
+  background: #ff3131;
+  border: 3px solid #000;
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
-  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.4));
+  box-shadow: 4px 4px 0px #000;
 }
 
-.brand-text h1 {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.comic-title {
+  font-family: var(--font-title);
+  font-size: 2.2rem;
+  letter-spacing: 0.05em;
+  color: var(--comic-red);
+  text-shadow: 2px 2px 0px #000;
+  line-height: 1;
 }
 
-.brand-text .subtitle {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--police-cyan);
-  letter-spacing: 0.1em;
-  display: block;
+.subtitle-tag {
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  background: var(--comic-yellow);
+  color: #000;
+  padding: 0.15rem 0.6rem;
+  border: 2px solid #000;
+  border-radius: 6px;
+  display: inline-block;
+  letter-spacing: 0.05em;
+  transform: rotate(-1.5deg);
+  box-shadow: 2px 2px 0px #000;
 }
 
 .header-controls {
@@ -181,80 +248,72 @@ body {
   gap: 1rem;
 }
 
-.mode-switch-container {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.mode-label {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-/* Buttons */
-.pill-btn {
-  font-family: var(--font-main);
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 0.55rem 1.2rem;
-  border-radius: 9999px;
-  border: 1px solid var(--bg-card-border);
-  background: rgba(30, 41, 59, 0.8);
-  color: var(--text-main);
+/* Comic Buttons */
+.comic-btn {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  padding: 0.55rem 1.3rem;
+  border: 3px solid var(--comic-ink);
+  border-radius: 12px;
+  background: var(--comic-paper);
+  color: var(--comic-ink);
   cursor: pointer;
+  box-shadow: 4px 4px 0px var(--comic-ink);
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
-.pill-btn:hover {
-  background: rgba(51, 65, 85, 0.9);
-  transform: translateY(-1px);
+.comic-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--comic-ink);
 }
 
-.mode-btn .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #94a3b8;
+.comic-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px var(--comic-ink);
 }
 
-.mode-btn .dot.demo-active {
-  background: var(--accent-gold);
-  box-shadow: 0 0 8px var(--accent-gold);
+.warning-comic-btn {
+  background: var(--comic-yellow);
+  color: #000;
+  font-size: 1.15rem;
 }
 
-.primary-btn {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+.warning-comic-btn:hover {
+  background: var(--comic-yellow-dark);
 }
 
-.primary-btn:hover {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+.primary-comic-btn {
+  background: var(--comic-green);
+  color: #fff;
+  text-shadow: 1px 1px 0px #000;
+  font-size: 1.15rem;
 }
 
-.icon-btn {
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid var(--bg-card-border);
-  color: var(--text-main);
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
+.primary-comic-btn:hover {
+  background: #00994f;
+}
+
+.comic-icon-btn {
+  background: var(--comic-cyan);
+  border: 3px solid #000;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  box-shadow: 4px 4px 0px #000;
+  transition: all 0.15s ease;
 }
 
-.icon-btn:hover {
-  background: rgba(51, 65, 85, 1);
-  color: var(--police-cyan);
+.comic-icon-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #000;
 }
 
 /* ------------------------------------------------------------------
@@ -264,7 +323,6 @@ body {
   display: grid;
   grid-template-columns: 320px 1fr 340px;
   gap: 1.5rem;
-  align-items: stretch;
 }
 
 @media (max-width: 1024px) {
@@ -277,14 +335,27 @@ body {
    OFFICER MASCOT CARD
 ------------------------------------------------------------------ */
 .officer-card {
-  padding: 1.75rem 1.25rem;
+  padding: 1.5rem 1.25rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 1.25rem;
+  gap: 1rem;
   position: relative;
-  overflow: hidden;
+}
+
+.comic-badge-banner {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  background: var(--comic-red);
+  color: #fff;
+  text-shadow: 1px 1px 0 #000;
+  border: 3px solid #000;
+  padding: 0.25rem 0.85rem;
+  border-radius: 8px;
+  box-shadow: 3px 3px 0px #000;
+  letter-spacing: 0.05em;
+  transform: rotate(-2deg);
 }
 
 .officer-avatar-container {
@@ -292,112 +363,96 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 0.5rem;
+  margin: 0.5rem 0;
 }
 
 .officer-halo {
   position: absolute;
-  width: 120px;
-  height: 120px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
-  transition: all 0.5s ease;
+  transition: all 0.3s ease;
+  z-index: 1;
 }
 
-.level-1-glow {
-  background: radial-gradient(circle, var(--level-1-glow) 0%, transparent 70%);
-  box-shadow: 0 0 30px var(--level-1-glow);
-}
+.level-1-glow { background: var(--comic-green); border: 3px solid #000; box-shadow: 4px 4px 0 #000; }
+.level-2-glow { background: var(--comic-yellow); border: 3px solid #000; box-shadow: 4px 4px 0 #000; }
+.level-3-glow { background: var(--comic-orange); border: 3px solid #000; box-shadow: 4px 4px 0 #000; animation: bounce-glow 0.5s infinite alternate; }
+.level-4-glow { background: var(--comic-red); border: 3px solid #000; box-shadow: 4px 4px 0 #000; animation: bounce-glow 0.3s infinite alternate; }
 
-.level-2-glow {
-  background: radial-gradient(circle, var(--level-2-glow) 0%, transparent 70%);
-  box-shadow: 0 0 35px var(--level-2-glow);
-}
-
-.level-3-glow {
-  background: radial-gradient(circle, var(--level-3-glow) 0%, transparent 70%);
-  box-shadow: 0 0 45px var(--level-3-glow);
-  animation: pulse-glow 1s infinite alternate;
-}
-
-.level-4-glow {
-  background: radial-gradient(circle, var(--level-4-glow) 0%, transparent 70%);
-  box-shadow: 0 0 60px var(--level-4-glow);
-  animation: pulse-glow 0.5s infinite alternate;
-}
-
-@keyframes pulse-glow {
-  0% { transform: scale(0.95); opacity: 0.7; }
-  100% { transform: scale(1.1); opacity: 1; }
+@keyframes bounce-glow {
+  0% { transform: scale(0.95); }
+  100% { transform: scale(1.08); }
 }
 
 .officer-svg {
   position: relative;
   z-index: 2;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
-}
-
-.officer-badge-rank {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  align-items: center;
-}
-
-.rank {
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--accent-gold);
 }
 
 .status-chip {
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 0.2rem 0.6rem;
-  border-radius: 9999px;
-  text-transform: uppercase;
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  padding: 0.25rem 0.75rem;
+  border: 2px solid #000;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
 }
 
 .status-chip.active {
-  background: rgba(16, 185, 129, 0.2);
-  color: var(--level-1);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: var(--comic-green);
+  color: #fff;
+  text-shadow: 1px 1px 0 #000;
 }
 
-.status-chip.resting {
-  background: rgba(148, 163, 184, 0.2);
-  color: var(--text-muted);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+.status-chip.alarm {
+  background: var(--comic-red);
+  color: #fff;
+  text-shadow: 1px 1px 0 #000;
+  animation: shake-badge 0.3s infinite alternate;
 }
 
-/* Speech Bubble */
-.speech-bubble {
-  background: rgba(30, 41, 59, 0.9);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  border-radius: 14px;
+/* Dynamic Comic Speech Bubble */
+.comic-speech-bubble {
+  background: #ffffff;
+  border: 3px solid #000;
+  border-radius: 16px;
   padding: 1rem;
   position: relative;
-  margin-top: 0.5rem;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  margin-top: 0.85rem;
+  box-shadow: 5px 5px 0px #000;
 }
 
-.speech-bubble::before {
-  content: '';
+.speech-tail {
   position: absolute;
-  top: -8px;
+  top: -14px;
   left: 50%;
   transform: translateX(-50%);
-  border-width: 0 8px 8px 8px;
-  border-style: solid;
-  border-color: transparent transparent rgba(30, 41, 59, 0.9) transparent;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 14px solid #000;
 }
 
-.speech-bubble p {
-  font-size: 0.85rem;
-  line-height: 1.45;
-  color: #e2e8f0;
-  font-weight: 500;
+.speech-tail::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: -7px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 10px solid #fff;
+}
+
+.comic-speech-bubble p {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--comic-ink);
 }
 
 /* ------------------------------------------------------------------
@@ -410,6 +465,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
+  position: relative;
 }
 
 .gauge-header {
@@ -419,59 +475,38 @@ body {
   align-items: center;
 }
 
-.gauge-header h2 {
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-}
-
-/* Level Badges */
-.level-badge {
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 0.35rem 0.85rem;
-  border-radius: 9999px;
+.comic-heading {
+  font-family: var(--font-title);
+  font-size: 1.5rem;
+  color: var(--comic-ink);
   letter-spacing: 0.05em;
-  transition: all 0.3s ease;
 }
 
-.level-badge.level-1 {
-  background: rgba(16, 185, 129, 0.15);
-  color: var(--level-1);
-  border: 1px solid rgba(16, 185, 129, 0.4);
+.comic-level-badge {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  padding: 0.4rem 1rem;
+  border: 3px solid #000;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0px #000;
+  letter-spacing: 0.05em;
 }
 
-.level-badge.level-2 {
-  background: rgba(245, 158, 11, 0.15);
-  color: var(--level-2);
-  border: 1px solid rgba(245, 158, 11, 0.4);
-}
+.comic-level-badge.level-1 { background: var(--comic-green); color: #fff; text-shadow: 1px 1px 0 #000; }
+.comic-level-badge.level-2 { background: var(--comic-yellow); color: #000; }
+.comic-level-badge.level-3 { background: var(--comic-orange); color: #fff; text-shadow: 1px 1px 0 #000; }
+.comic-level-badge.level-4 { background: var(--comic-red); color: #fff; text-shadow: 1px 1px 0 #000; animation: shake-badge 0.4s infinite alternate; }
 
-.level-badge.level-3 {
-  background: rgba(249, 115, 22, 0.2);
-  color: var(--level-3);
-  border: 1px solid rgba(249, 115, 22, 0.5);
-  animation: flash-badge 0.8s infinite alternate;
-}
-
-.level-badge.level-4 {
-  background: rgba(239, 68, 68, 0.25);
-  color: var(--level-4);
-  border: 1px solid rgba(239, 68, 68, 0.6);
-  animation: flash-badge 0.5s infinite alternate;
-}
-
-@keyframes flash-badge {
-  0% { opacity: 0.7; }
-  100% { opacity: 1; transform: scale(1.03); }
+@keyframes shake-badge {
+  0% { transform: rotate(-2deg); }
+  100% { transform: rotate(2deg); }
 }
 
 /* SVG Radial Gauge */
 .radial-gauge-container {
   position: relative;
-  width: 240px;
-  height: 240px;
+  width: 250px;
+  height: 250px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -485,77 +520,102 @@ body {
 
 .gauge-bg {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.06);
-  stroke-width: 14;
+  stroke: #e2e8f0;
+  stroke-width: 18;
 }
 
 .gauge-progress {
   fill: none;
-  stroke-width: 14;
+  stroke-width: 18;
   stroke-linecap: round;
-  stroke-dasharray: 502; /* 2 * PI * 80 */
+  stroke-dasharray: 502;
   stroke-dashoffset: 502;
-  transition: stroke-dashoffset 0.5s ease, stroke 0.5s ease;
+  transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
 }
 
-.level-1-stroke { stroke: var(--level-1); filter: drop-shadow(0 0 8px var(--level-1-glow)); }
-.level-2-stroke { stroke: var(--level-2); filter: drop-shadow(0 0 10px var(--level-2-glow)); }
-.level-3-stroke { stroke: var(--level-3); filter: drop-shadow(0 0 12px var(--level-3-glow)); }
-.level-4-stroke { stroke: var(--level-4); filter: drop-shadow(0 0 16px var(--level-4-glow)); }
+.level-1-stroke { stroke: var(--comic-green); }
+.level-2-stroke { stroke: var(--comic-yellow); }
+.level-3-stroke { stroke: var(--comic-orange); }
+.level-4-stroke { stroke: var(--comic-red); }
 
-/* Gauge Readout Center */
 .gauge-readout {
   position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
 }
 
 .time-display {
-  font-family: var(--font-display);
-  font-size: 2.5rem;
-  font-weight: 800;
+  font-family: var(--font-title);
+  font-size: 3.2rem;
   line-height: 1;
-  letter-spacing: -0.02em;
+  color: var(--comic-ink);
+  letter-spacing: 0.02em;
 }
 
 .time-display .unit {
-  font-size: 1.1rem;
-  color: var(--text-muted);
-  font-weight: 600;
-  margin-right: 0.15rem;
+  font-size: 1.4rem;
+  color: var(--comic-red);
+  margin-right: 0.2rem;
 }
 
 .gauge-subtitle {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  font-weight: 600;
-  text-transform: uppercase;
-  margin-top: 0.35rem;
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  color: #64748b;
   letter-spacing: 0.05em;
+  margin-top: 0.25rem;
 }
 
 .idle-notice {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--accent-gold);
-  background: rgba(251, 191, 36, 0.15);
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  padding: 0.15rem 0.6rem;
+  border: 2px solid #000;
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 #000;
   margin-top: 0.35rem;
 }
 
-/* Gauge Footer Stats */
+.idle-notice.text-green {
+  background: var(--comic-green);
+  color: #fff;
+}
+
+.idle-notice.text-red {
+  background: var(--comic-red);
+  color: #fff;
+  animation: shake-badge 0.3s infinite alternate;
+}
+
+/* Comic Starburst Callout */
+.comic-starburst {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: var(--comic-red);
+  color: #fff;
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  padding: 0.6rem 0.8rem;
+  clip-path: polygon(50% 0%, 65% 20%, 98% 15%, 80% 40%, 100% 70%, 70% 75%, 65% 100%, 45% 80%, 15% 95%, 25% 65%, 0% 50%, 25% 35%, 10% 10%, 40% 20%);
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  transform: rotate(12deg);
+  animation: starburst-pop 1s infinite alternate ease-in-out;
+}
+
+@keyframes starburst-pop {
+  0% { transform: rotate(10deg) scale(0.95); }
+  100% { transform: rotate(14deg) scale(1.08); }
+}
+
 .gauge-footer-stats {
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  background: rgba(15, 23, 42, 0.5);
-  padding: 0.85rem 1rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1rem;
 }
 
 .stat-item {
@@ -565,21 +625,23 @@ body {
 }
 
 .stat-label {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
+  font-family: var(--font-title);
+  font-size: 0.8rem;
+  color: #64748b;
   letter-spacing: 0.05em;
 }
 
 .stat-value {
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  color: var(--comic-ink);
 }
 
-.text-green { color: var(--level-1); }
+.text-green { color: var(--comic-green); }
+.text-red { color: var(--comic-red); }
 
 /* ------------------------------------------------------------------
-   LEVELS ESCALATION MATRIX CARD
+   MATRIX CARDS (RIGHT)
 ------------------------------------------------------------------ */
 .levels-card {
   padding: 1.5rem;
@@ -588,16 +650,9 @@ body {
   gap: 1rem;
 }
 
-.levels-card h3 {
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-}
-
 .matrix-desc {
-  font-size: 0.75rem;
-  color: var(--text-muted);
+  font-size: 0.85rem;
+  color: #475569;
   margin-top: -0.5rem;
 }
 
@@ -610,22 +665,23 @@ body {
 .level-card {
   padding: 0.85rem;
   border-radius: 12px;
-  background: rgba(30, 41, 59, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  transition: all 0.3s ease;
+  background: #f8fafc;
+  border: 3px solid #000;
+  box-shadow: 3px 3px 0px #000;
+  transition: all 0.2s ease;
   opacity: 0.6;
 }
 
 .level-card.active {
   opacity: 1;
-  transform: scale(1.02);
-  background: rgba(30, 41, 59, 0.85);
+  transform: scale(1.03);
+  box-shadow: 6px 6px 0px #000;
 }
 
-.level-card.level-1.active { border-color: var(--level-1); box-shadow: 0 0 12px var(--level-1-glow); }
-.level-card.level-2.active { border-color: var(--level-2); box-shadow: 0 0 14px var(--level-2-glow); }
-.level-card.level-3.active { border-color: var(--level-3); box-shadow: 0 0 16px var(--level-3-glow); }
-.level-card.level-4.active { border-color: var(--level-4); box-shadow: 0 0 20px var(--level-4-glow); }
+.level-card.level-1.active { background: #e6f9f0; border-color: var(--comic-green); }
+.level-card.level-2.active { background: #fffde6; border-color: var(--comic-yellow-dark); }
+.level-card.level-3.active { background: #fff0e6; border-color: var(--comic-orange); }
+.level-card.level-4.active { background: #ffe6e6; border-color: var(--comic-red); }
 
 .level-card-header {
   display: flex;
@@ -634,32 +690,100 @@ body {
 }
 
 .level-icon {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 }
 
 .level-title-group h4 {
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
 }
 
 .level-range {
-  font-size: 0.7rem;
-  color: var(--text-muted);
+  font-size: 0.75rem;
+  color: #64748b;
   display: block;
 }
 
 .level-card-desc {
-  font-size: 0.75rem;
-  color: #cbd5e1;
+  font-size: 0.85rem;
+  color: #334155;
   margin-top: 0.35rem;
-  line-height: 1.35;
+  line-height: 1.3;
 }
+
+/* ------------------------------------------------------------------
+   COMIC STRIP SECTION
+------------------------------------------------------------------ */
+.comic-strip-container {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.comic-panels-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .comic-panels-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.comic-panel {
+  background: #ffffff;
+  border: 3px solid #000;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0px #000;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.panel-tag {
+  font-family: var(--font-title);
+  font-size: 0.8rem;
+  background: #000;
+  color: #fff;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.panel-art {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.comic-caption {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  background: var(--comic-green);
+  color: #fff;
+  border: 2px solid #000;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  margin-bottom: 0.3rem;
+  box-shadow: 2px 2px 0 #000;
+}
+
+.yellow-cap { background: var(--comic-yellow); color: #000; }
+.orange-cap { background: var(--comic-orange); color: #fff; }
+.red-cap { background: var(--comic-red); color: #fff; }
 
 /* ------------------------------------------------------------------
    BOTTOM PANEL
 ------------------------------------------------------------------ */
 .bottom-panel {
-  padding: 1.25rem 1.5rem;
+  padding: 1.5rem;
 }
 
 .stats-row {
@@ -679,28 +803,26 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(15, 23, 42, 0.6);
-  padding: 0.85rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1rem;
 }
 
 .box-number {
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: var(--police-cyan);
+  font-family: var(--font-title);
+  font-size: 2.2rem;
+  color: var(--comic-red);
+  text-shadow: 1px 1px 0 #000;
 }
 
 .box-label {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  font-weight: 500;
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  color: #475569;
+  letter-spacing: 0.05em;
   margin-top: 0.2rem;
 }
 
 /* ------------------------------------------------------------------
-   LEVEL 4 OFFICER INTERVENTION OVERLAY MODAL
+   MODAL
 ------------------------------------------------------------------ */
 .intervention-modal {
   position: fixed;
@@ -720,55 +842,52 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(2, 6, 23, 0.92);
-  backdrop-filter: blur(20px);
+  background: rgba(0, 0, 0, 0.85);
 }
 
-.glass-panel-heavy {
-  background: rgba(15, 23, 42, 0.95);
-  border: 2px solid var(--level-4);
-  box-shadow: 0 0 50px rgba(239, 68, 68, 0.4);
-  border-radius: 20px;
+.comic-box-heavy {
+  background: #ffffff;
+  border: 5px solid #000;
+  border-radius: 24px;
+  box-shadow: 12px 12px 0px #000;
 }
 
 .intervention-content {
   position: relative;
   z-index: 1001;
-  max-width: 540px;
+  max-width: 560px;
   width: 90%;
   overflow: hidden;
-  animation: modal-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: comic-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-@keyframes modal-pop {
-  0% { transform: scale(0.8); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+@keyframes comic-pop {
+  0% { transform: scale(0.7) rotate(-5deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
 .police-siren-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #020617;
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid var(--bg-card-border);
+  background: #000;
+  padding: 0.6rem 1rem;
 }
 
 .bar-light {
   width: 60px;
-  height: 8px;
+  height: 10px;
   border-radius: 4px;
 }
 
-.red-flash { background: #ef4444; box-shadow: 0 0 12px #ef4444; animation: flash-red 0.5s infinite alternate; }
-.blue-flash { background: #3b82f6; box-shadow: 0 0 12px #3b82f6; animation: flash-blue 0.5s infinite alternate-reverse; }
+.red-flash { background: var(--comic-red); animation: flash-red 0.4s infinite alternate; }
+.blue-flash { background: var(--comic-cyan); animation: flash-blue 0.4s infinite alternate-reverse; }
 
 .police-badge-small {
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  font-weight: 800;
-  color: var(--accent-gold);
-  letter-spacing: 0.1em;
+  font-family: var(--font-title);
+  font-size: 1rem;
+  color: var(--comic-yellow);
+  letter-spacing: 0.08em;
 }
 
 .intervention-header {
@@ -776,18 +895,18 @@ body {
   text-align: center;
 }
 
-.intervention-header h2 {
-  font-family: var(--font-display);
-  color: var(--level-4);
-  font-size: 1.4rem;
-  font-weight: 800;
+.comic-modal-title {
+  font-family: var(--font-title);
+  color: var(--comic-red);
+  font-size: 2rem;
+  text-shadow: 2px 2px 0 #000;
 }
 
 .intervention-subtitle {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  letter-spacing: 0.1em;
-  font-weight: 600;
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  color: #64748b;
+  letter-spacing: 0.08em;
 }
 
 .intervention-body {
@@ -797,47 +916,46 @@ body {
   gap: 1.25rem;
 }
 
-.alert-banner {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+.comic-alert-banner {
+  background: #ffe6e6;
+  border: 3px solid var(--comic-red);
   padding: 0.85rem;
-  border-radius: 10px;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0 #000;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .break-countdown-box {
-  background: rgba(2, 6, 23, 0.6);
   padding: 1.25rem;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
   text-align: center;
 }
 
 .break-countdown-box h3 {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  letter-spacing: 0.08em;
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  color: #64748b;
+  letter-spacing: 0.05em;
 }
 
 .countdown-digits {
-  font-family: var(--font-display);
-  font-size: 3.5rem;
-  font-weight: 800;
-  color: var(--accent-gold);
-  margin: 0.25rem 0;
+  font-family: var(--font-title);
+  font-size: 4rem;
+  color: var(--comic-red);
+  text-shadow: 3px 3px 0 #000;
+  margin: 0.2rem 0;
   letter-spacing: 0.05em;
-  text-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
 }
 
 .timer-desc {
-  font-size: 0.75rem;
-  color: var(--text-muted);
+  font-size: 0.85rem;
+  color: #475569;
 }
 
 .stretch-tips h4 {
-  font-size: 0.85rem;
-  color: var(--police-cyan);
+  font-family: var(--font-title);
+  font-size: 1rem;
+  color: var(--comic-blue);
   margin-bottom: 0.5rem;
 }
 
@@ -849,8 +967,8 @@ body {
 }
 
 .stretch-tips li {
-  font-size: 0.8rem;
-  color: #cbd5e1;
+  font-size: 0.9rem;
+  color: var(--comic-ink);
 }
 
 .intervention-footer {
@@ -863,13 +981,5 @@ body {
   width: 100%;
   justify-content: center;
   padding: 0.85rem 1.5rem;
-  font-size: 0.95rem;
-}
-
-.large-btn:disabled {
-  background: rgba(51, 65, 85, 0.5);
-  border-color: rgba(255, 255, 255, 0.05);
-  color: var(--text-muted);
-  box-shadow: none;
-  cursor: not-allowed;
+  font-size: 1.3rem;
 }

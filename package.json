@@ -1,0 +1,18 @@
+{
+  "name": "procrastination-police",
+  "version": "1.0.0",
+  "description": "Procrastination Police — Anti-Work Alarm Division ('AYOOO SAYIP OP!')",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "build": "echo 'Static site ready for Vercel deployment'"
+  },
+  "keywords": [
+    "procrastination-police",
+    "anti-work",
+    "alarm",
+    "vercel"
+  ],
+  "author": "",
+  "license": "MIT"
+}

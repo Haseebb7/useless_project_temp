@@ -1,75 +1,43 @@
 /* ------------------------------------------------------------------
-   PROCRASTINATION POLICE — REVERSE BREAK ENFORCER (APP LOGIC)
-   Swapped Logic: Monitors Continuous Active Work Duration and
-   enforces healthy break schedules across 4 escalating Levels.
+   PROCRASTINATION POLICE — ANTI-WORK ALARM EDITION
+   Subject: Working / Typing / Clicking triggers the "AYOOO SAYIP OP!" Alarm!
 ------------------------------------------------------------------ */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Config & Threshold Modes
-  const THRESHOLDS = {
-    demo: {
-      name: 'Demo Mode (Seconds)',
-      l1Max: 120,   // Level 1: < 2 min (120s)
-      l2Max: 300,   // Level 2: 2–5 min (300s)
-      l3Max: 600,   // Level 3: 5–10 min (600s)
-      // Level 4: 600s+
-      breakDuration: 30, // 30s mandatory rest for demo
-      idleTimeout: 15,   // 15s inactivity = resting
-      labels: {
-        l1: 'Active < 2 min continuous',
-        l2: 'Active 2–5 min continuous',
-        l3: 'Active 5–10 min + Warning Siren',
-        l4: 'Active 10+ min continuous'
-      }
-    },
-    real: {
-      name: 'Real Mode (Minutes)',
-      l1Max: 1500,  // Level 1: < 25 mins (1500s)
-      l2Max: 2700,  // Level 2: 25–45 mins (2700s)
-      l3Max: 3600,  // Level 3: 45–60 mins (3600s)
-      // Level 4: 60 mins+ (3600s+)
-      breakDuration: 300, // 5 min mandatory break
-      idleTimeout: 120,   // 2 min inactivity = resting
-      labels: {
-        l1: 'Active < 25 min continuous',
-        l2: 'Active 25–45 min continuous',
-        l3: 'Active 45–60 min + Warning Siren',
-        l4: 'Active 60+ min continuous'
-      }
-    }
+  // Thresholds for Work Alarm Escalation
+  const ALARM_THRESHOLDS = {
+    l1Max: 1,   // Level 1: Resting / Safe (0s work)
+    l2Max: 3,   // Level 2: Work Detected (1-2s work)
+    l3Max: 8,   // Level 3: "AYOOO SAYIP OP!" Alarm (3-7s work)
+    breakDuration: 15
   };
 
   // State Variables
-  let isDemoMode = true;
-  let currentConfig = THRESHOLDS.demo;
-  
-  let activeWorkSeconds = 0;
-  let totalWorkSecondsToday = 0;
-  let breaksTaken = 0;
-  let interventionsCount = 0;
+  let illegalWorkSeconds = 0;
+  let totalRestSeconds = 0;
+  let workAttempts = 0;
+  let alarmsTriggered = 0;
   
   let currentLevel = 1;
   let soundMuted = false;
-  let isUserActive = true;
-  let lastActivityTimestamp = Date.now();
+  let isWorkingNow = false;
+  let lastWorkTimestamp = 0;
+  let audioUnlocked = false;
   
-  let mainTimerInterval = null;
+  let mainEngineInterval = null;
   let breakTimerInterval = null;
   let remainingBreakSeconds = 0;
 
-  // Web Audio Context for Siren & Effects
-  let audioCtx = null;
-  let sirenOscillator = null;
-  let sirenGain = null;
-  let isSirenPlaying = false;
-
   // DOM Elements
-  const toggleModeBtn = document.getElementById('toggleModeBtn');
-  const modeText = document.getElementById('modeText');
+  const audioStartOverlay = document.getElementById('audioStartOverlay');
+  const activateSensorBtn = document.getElementById('activateSensorBtn');
+  const ayoooAudioTag = document.getElementById('ayoooAudio');
+
+  const testAlarmBtn = document.getElementById('testAlarmBtn');
   const soundToggleBtn = document.getElementById('soundToggleBtn');
   const soundOnIcon = document.getElementById('soundOnIcon');
   const soundOffIcon = document.getElementById('soundOffIcon');
-  const takeBreakBtn = document.getElementById('takeBreakBtn');
+  const resetProcrastinationBtn = document.getElementById('resetProcrastinationBtn');
   const sirenOverlay = document.getElementById('sirenOverlay');
 
   const officerHalo = document.getElementById('officerHalo');
@@ -82,169 +50,184 @@ document.addEventListener('DOMContentLoaded', () => {
   const workSeconds = document.getElementById('workSeconds');
   const idleNotice = document.getElementById('idleNotice');
   const activityStateText = document.getElementById('activityStateText');
-  const nextLevelCountdown = document.getElementById('nextLevelCountdown');
+  const alarmsTriggeredCount = document.getElementById('alarmsTriggeredCount');
+  const burstText = document.getElementById('burstText');
 
   const cardLevel1 = document.getElementById('cardLevel1');
   const cardLevel2 = document.getElementById('cardLevel2');
   const cardLevel3 = document.getElementById('cardLevel3');
   const cardLevel4 = document.getElementById('cardLevel4');
 
-  const rangeL1 = document.getElementById('rangeL1');
-  const rangeL2 = document.getElementById('rangeL2');
-  const rangeL3 = document.getElementById('rangeL3');
-  const rangeL4 = document.getElementById('rangeL4');
-
-  const totalWorkTimeEl = document.getElementById('totalWorkTime');
-  const breaksTakenCountEl = document.getElementById('breaksTakenCount');
-  const interventionsCountEl = document.getElementById('interventionsCount');
-  const healthScoreEl = document.getElementById('healthScore');
+  const totalRestTimeEl = document.getElementById('totalRestTime');
+  const workAttemptsCountEl = document.getElementById('workAttemptsCount');
+  const audioAlarmsPlayedEl = document.getElementById('audioAlarmsPlayed');
+  const procrastinationScoreEl = document.getElementById('procrastinationScore');
 
   // Modal Elements
   const officerInterventionModal = document.getElementById('officerInterventionModal');
   const modalWorkDuration = document.getElementById('modalWorkDuration');
   const modalBreakTimer = document.getElementById('modalBreakTimer');
   const completeBreakBtn = document.getElementById('completeBreakBtn');
-  const completeBreakText = document.getElementById('completeBreakText');
 
-  // ------------------------------------------------------------------
-  // AUDIO SYNTHESIZER (Web Audio API)
-  // ------------------------------------------------------------------
-  function initAudio() {
+  // Web Audio Context & Buffer Fallback
+  let audioCtx = null;
+  let audioBuffer = null;
+
+  function initWebAudio() {
     if (!audioCtx) {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       audioCtx = new AudioContext();
     }
-  }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
 
-  function startSiren() {
-    if (soundMuted || isSirenPlaying) return;
-    initAudio();
-    if (!audioCtx) return;
-
-    try {
-      sirenOscillator = audioCtx.createOscillator();
-      sirenGain = audioCtx.createGain();
-
-      sirenOscillator.type = 'sawtooth';
-      sirenGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-
-      // Frequency sweep (police siren)
-      const now = audioCtx.currentTime;
-      sirenOscillator.frequency.setValueAtTime(600, now);
-      
-      // Siren sweep interval using Web Audio LFO frequency
-      let up = true;
-      let freq = 600;
-      const sirenSweep = setInterval(() => {
-        if (!isSirenPlaying || soundMuted) {
-          clearInterval(sirenSweep);
-          return;
-        }
-        freq = up ? freq + 40 : freq - 40;
-        if (freq >= 950) up = false;
-        if (freq <= 550) up = true;
-        if (sirenOscillator) {
-          sirenOscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        }
-      }, 50);
-
-      sirenOscillator.connect(sirenGain);
-      sirenGain.connect(audioCtx.destination);
-      sirenOscillator.start();
-      isSirenPlaying = true;
-    } catch (e) {
-      console.warn('Audio start siren error:', e);
+    // Pre-fetch & decode MP3 buffer for instant Web Audio playback
+    if (!audioBuffer) {
+      fetch('ayooo-sayip-op.mp3')
+        .then(response => response.arrayBuffer())
+        .then(data => audioCtx.decodeAudioData(data))
+        .then(decoded => {
+          audioBuffer = decoded;
+        })
+        .catch(err => console.log('Web Audio fetch/decode fallback:', err));
     }
   }
 
-  function stopSiren() {
-    if (sirenOscillator) {
-      try {
-        sirenOscillator.stop();
-        sirenOscillator.disconnect();
-      } catch (e) {}
-      sirenOscillator = null;
-    }
-    isSirenPlaying = false;
-  }
-
-  function playChime(freq = 880, duration = 0.2) {
+  // ------------------------------------------------------------------
+  // AUDIO PLAYBACK ENGINE ("AYOOO SAYIP OP!")
+  // ------------------------------------------------------------------
+  function playAyoooSound() {
     if (soundMuted) return;
-    initAudio();
-    if (!audioCtx) return;
 
-    try {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    audioUnlocked = true;
 
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration);
-    } catch (e) {}
+    // Method 1: Web Audio API Buffer Playback (Instant, bypasses HTML5 element limitations)
+    if (audioCtx && audioBuffer) {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const source = audioCtx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioCtx.destination);
+        source.start(0);
+        alarmsTriggered++;
+        if (audioAlarmsPlayedEl) audioAlarmsPlayedEl.textContent = alarmsTriggered;
+        if (alarmsTriggeredCount) alarmsTriggeredCount.textContent = `${alarmsTriggered} ALARMS`;
+        return;
+      } catch (e) {
+        console.warn('Web Audio buffer play error:', e);
+      }
+    }
+
+    // Method 2: HTML5 Audio Element Playback
+    if (ayoooAudioTag) {
+      try {
+        ayoooAudioTag.currentTime = 0;
+        const playPromise = ayoooAudioTag.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(err => {
+            console.log('HTML5 audio play restriction:', err);
+          });
+        }
+        alarmsTriggered++;
+        if (audioAlarmsPlayedEl) audioAlarmsPlayedEl.textContent = alarmsTriggered;
+        if (alarmsTriggeredCount) alarmsTriggeredCount.textContent = `${alarmsTriggered} ALARMS`;
+      } catch (e) {
+        console.warn('HTML5 audio play error:', e);
+      }
+    }
   }
 
   // ------------------------------------------------------------------
-  // USER ACTIVITY TRACKER
+  // AUDIO SENSOR ACTIVATION OVERLAY
   // ------------------------------------------------------------------
-  const registerActivity = () => {
-    lastActivityTimestamp = Date.now();
-    if (!isUserActive) {
-      isUserActive = true;
-      updateActivityStatusUI();
+  function unlockAudioPermissions() {
+    initWebAudio();
+    if (ayoooAudioTag) {
+      ayoooAudioTag.play().then(() => {
+        ayoooAudioTag.pause();
+        ayoooAudioTag.currentTime = 0;
+      }).catch(() => {});
     }
+
+    if (audioStartOverlay) {
+      audioStartOverlay.classList.add('hidden');
+    }
+    audioUnlocked = true;
+  }
+
+  if (activateSensorBtn) {
+    activateSensorBtn.addEventListener('click', unlockAudioPermissions);
+  }
+
+  // Auto-unlock on any first click anywhere on document
+  document.addEventListener('click', () => {
+    if (!audioUnlocked) unlockAudioPermissions();
+  }, { once: true });
+
+  // ------------------------------------------------------------------
+  // WORK DETECTION SENSOR (KEYBOARD & MOUSE)
+  // ------------------------------------------------------------------
+  const registerWorkAttempt = (evt) => {
+    // Ignore clicks inside control buttons
+    if (evt && evt.target && evt.target.closest('#activateSensorBtn, #completeBreakBtn, #resetProcrastinationBtn, #soundToggleBtn, #testAlarmBtn')) {
+      return;
+    }
+
+    lastWorkTimestamp = Date.now();
+    
+    if (!isWorkingNow) {
+      isWorkingNow = true;
+      workAttempts++;
+      if (workAttemptsCountEl) workAttemptsCountEl.textContent = workAttempts;
+    }
+
+    // Trigger instant audio alarm on keypress or click!
+    playAyoooSound();
+
+    // Increment continuous work seconds on active input
+    illegalWorkSeconds += 1;
+    evaluateLevel();
+    updateUI();
   };
 
-  ['mousemove', 'keydown', 'mousedown', 'scroll', 'touchstart'].forEach(evt => {
-    window.addEventListener(evt, registerActivity, { passive: true });
-  });
-
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) registerActivity();
+  ['keydown', 'mousedown', 'click', 'scroll', 'input'].forEach(evt => {
+    window.addEventListener(evt, (e) => registerWorkAttempt(e), { passive: true });
   });
 
   // ------------------------------------------------------------------
-  // TIMER & EVALUATION ENGINE
+  // MAIN ENGINE LOOP
   // ------------------------------------------------------------------
   function startMainEngine() {
-    if (mainTimerInterval) clearInterval(mainTimerInterval);
+    if (mainEngineInterval) clearInterval(mainEngineInterval);
 
-    mainTimerInterval = setInterval(() => {
-      // Check if user has gone idle
+    mainEngineInterval = setInterval(() => {
       const now = Date.now();
-      const idleTimeSeconds = (now - lastActivityTimestamp) / 1000;
+      const timeSinceLastWork = (now - lastWorkTimestamp) / 1000;
 
-      if (idleTimeSeconds >= currentConfig.idleTimeout) {
-        if (isUserActive) {
-          isUserActive = false;
-          updateActivityStatusUI();
+      if (timeSinceLastWork >= 2.5) {
+        if (isWorkingNow) {
+          isWorkingNow = false;
         }
-      }
-
-      // Increment active work time only if user is active & modal not open
-      if (isUserActive && officerInterventionModal.classList.contains('hidden')) {
-        activeWorkSeconds++;
-        totalWorkSecondsToday++;
+        if (illegalWorkSeconds > 0) {
+          illegalWorkSeconds = Math.max(0, illegalWorkSeconds - 1);
+        }
+        totalRestSeconds++;
       }
 
       evaluateLevel();
-      updateReadoutUI();
-      updateStatsUI();
+      updateUI();
     }, 1000);
   }
 
   function evaluateLevel() {
     let newLevel = 1;
 
-    if (activeWorkSeconds >= currentConfig.l3Max) {
+    if (illegalWorkSeconds >= ALARM_THRESHOLDS.l3Max) {
       newLevel = 4;
-    } else if (activeWorkSeconds >= currentConfig.l2Max) {
+    } else if (illegalWorkSeconds >= ALARM_THRESHOLDS.l2Max) {
       newLevel = 3;
-    } else if (activeWorkSeconds >= currentConfig.l1Max) {
+    } else if (illegalWorkSeconds >= ALARM_THRESHOLDS.l1Max) {
       newLevel = 2;
     } else {
       newLevel = 1;
@@ -257,151 +240,122 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function onLevelChange(level) {
-    // Audio Feedback
-    if (level === 2) {
-      playChime(660, 0.3);
-      stopSiren();
-    } else if (level === 3) {
-      playChime(900, 0.4);
-      startSiren();
-    } else if (level === 4) {
-      stopSiren();
-      startSiren();
-      triggerOfficerIntervention();
-    } else if (level === 1) {
-      stopSiren();
-      playChime(1200, 0.3);
+    if (level === 3 || level === 4) {
+      playAyoooSound();
+      if (level === 4) {
+        triggerLockdownModal();
+      }
     }
-
     updateLevelUI(level);
   }
 
   // ------------------------------------------------------------------
   // UI UPDATE FUNCTIONS
   // ------------------------------------------------------------------
-  function updateActivityStatusUI() {
-    if (isUserActive) {
-      activityStatusBadge.textContent = 'Work Session Active';
-      activityStatusBadge.className = 'status-chip active';
-      idleNotice.classList.add('hidden');
-      activityStateText.textContent = 'Active Input Detected';
-      activityStateText.className = 'stat-value text-green';
-    } else {
-      activityStatusBadge.textContent = 'User Resting / Idle';
-      activityStatusBadge.className = 'status-chip resting';
-      idleNotice.classList.remove('hidden');
-      activityStateText.textContent = 'Resting / Inactive';
-      activityStateText.className = 'stat-value';
-    }
-  }
+  function updateUI() {
+    const mins = Math.floor(illegalWorkSeconds / 60);
+    const secs = illegalWorkSeconds % 60;
+    if (workMinutes) workMinutes.textContent = String(mins).padStart(2, '0');
+    if (workSeconds) workSeconds.textContent = String(secs).padStart(2, '0');
 
-  function updateReadoutUI() {
-    const mins = Math.floor(activeWorkSeconds / 60);
-    const secs = activeWorkSeconds % 60;
-    workMinutes.textContent = String(mins).padStart(2, '0');
-    workSeconds.textContent = String(secs).padStart(2, '0');
-
-    // Update SVG Progress Arc
-    const circumference = 502; // 2 * PI * 80
-    let progressRatio = 0;
-    const maxThreshold = currentConfig.l3Max;
-    progressRatio = Math.min(activeWorkSeconds / maxThreshold, 1.0);
-
-    const strokeOffset = circumference - (progressRatio * circumference);
-    gaugeProgress.style.strokeDashoffset = strokeOffset;
-
-    // Stroke Color Class
-    gaugeProgress.className = `gauge-progress level-${currentLevel}-stroke`;
-
-    // Next Level Countdown Text
-    let nextThreshold = currentConfig.l1Max;
-    let nextLabel = 'Level 2';
-
-    if (currentLevel === 1) {
-      nextThreshold = currentConfig.l1Max;
-      nextLabel = 'Level 2';
-    } else if (currentLevel === 2) {
-      nextThreshold = currentConfig.l2Max;
-      nextLabel = 'Level 3 Siren';
-    } else if (currentLevel === 3) {
-      nextThreshold = currentConfig.l3Max;
-      nextLabel = 'Level 4 Intervention';
-    } else {
-      nextLevelCountdown.textContent = 'MAX LEVEL 4 REACHED';
-      return;
+    if (gaugeProgress) {
+      const circumference = 502;
+      const progressRatio = Math.min(illegalWorkSeconds / ALARM_THRESHOLDS.l3Max, 1.0);
+      const strokeOffset = circumference - (progressRatio * circumference);
+      gaugeProgress.style.strokeDashoffset = strokeOffset;
+      gaugeProgress.className = `gauge-progress level-${currentLevel}-stroke`;
     }
 
-    const secondsLeft = Math.max(0, nextThreshold - activeWorkSeconds);
-    const cMins = Math.floor(secondsLeft / 60);
-    const cSecs = secondsLeft % 60;
-    nextLevelCountdown.textContent = `In ${String(cMins).padStart(2, '0')}:${String(cSecs).padStart(2, '0')} (${nextLabel})`;
+    if (isWorkingNow || illegalWorkSeconds > 0) {
+      if (activityStatusBadge) {
+        activityStatusBadge.textContent = '🚨 WORK DETECTED! ALARM!';
+        activityStatusBadge.className = 'status-chip alarm';
+      }
+      if (idleNotice) {
+        idleNotice.textContent = '🚨 ILLEGAL WORK IN PROGRESS!';
+        idleNotice.className = 'idle-notice text-red';
+      }
+      if (activityStateText) {
+        activityStateText.textContent = 'KEYBOARD / MOUSE CLICKED!';
+        activityStateText.className = 'stat-value text-red';
+      }
+    } else {
+      if (activityStatusBadge) {
+        activityStatusBadge.textContent = 'PEACEFUL PROCRASTINATING';
+        activityStatusBadge.className = 'status-chip active';
+      }
+      if (idleNotice) {
+        idleNotice.textContent = '🟢 NO WORK DETECTED (SAFE)';
+        idleNotice.className = 'idle-notice text-green';
+      }
+      if (activityStateText) {
+        activityStateText.textContent = 'RESTING (NO KEYS/CLICKS)';
+        activityStateText.className = 'stat-value text-green';
+      }
+    }
+
+    const rMins = Math.floor(totalRestSeconds / 60);
+    const rSecs = totalRestSeconds % 60;
+    if (totalRestTimeEl) totalRestTimeEl.textContent = `${String(rMins).padStart(2, '0')}:${String(rSecs).padStart(2, '0')}`;
+
+    let score = 100 - (workAttempts * 5) + Math.floor(totalRestSeconds / 10);
+    score = Math.max(10, Math.min(100, score));
+    if (procrastinationScoreEl) procrastinationScoreEl.textContent = `${score}%`;
   }
 
   function updateLevelUI(level) {
-    // Level Badge Header
     const levelNames = {
-      1: '🟢 LEVEL 1 — PRODUCTIVE',
-      2: '🟡 LEVEL 2 — SUSPICIOUS',
-      3: '🟠 LEVEL 3 — PROCRASTINATING ON BREAKS',
-      4: '🔴 LEVEL 4 — OFFICER INTERVENTION'
+      1: '🟢 LEVEL 1 — SAFE & RESTING',
+      2: '🟡 LEVEL 2 — WORK DETECTED!',
+      3: '🟠 LEVEL 3 — "AYOOO SAYIP OP!" ALARM',
+      4: '🔴 LEVEL 4 — LOCKDOWN BUST'
     };
-    levelBadge.textContent = levelNames[level];
-    levelBadge.className = `level-badge level-${level}`;
+    if (levelBadge) {
+      levelBadge.textContent = levelNames[level];
+      levelBadge.className = `comic-level-badge level-${level}`;
+    }
 
-    // Officer Halo & Speech
-    officerHalo.className = `officer-halo level-${level}-glow`;
+    if (officerHalo) officerHalo.className = `officer-halo level-${level}-glow`;
 
-    const officerDialogues = {
-      1: '"Officer on duty! Active work session in progress. You are pacing well and healthy!"',
-      2: '"Officer Warning: You have been working continuously for a while now. Eye strain building up, wrap up soon!"',
-      3: '"🚨 SIREN ALERT! Continuous overwork detected! You are resisting necessary rest. STEP AWAY NOW!"',
-      4: '"👮‍♂️ MANDATORY OVERWORK INTERVENTION! Screen locked until break completion. Stand up and rest!"'
+    const comicDialogues = {
+      1: '"NO WORK DETECTED! Peaceful procrastinating in progress. Officer is satisfied!"',
+      2: '"WARNING! Keystroke or click detected! Put down that mouse now!"',
+      3: '"🚨 AYOOO SAYIP OP! Stop working immediately! Alarm system activated!"',
+      4: '"👮‍♂️ WORK LOCKDOWN BUST! You have been caught working! Rest immediately!"'
     };
-    officerSpeech.textContent = officerDialogues[level];
+    if (officerSpeech) officerSpeech.textContent = comicDialogues[level];
 
-    // Card Active States
+    const burstLabels = {
+      1: 'SAFE!',
+      2: 'CLICKED!',
+      3: 'AYOOO!',
+      4: 'LOCKDOWN!'
+    };
+    if (burstText) burstText.textContent = burstLabels[level];
+
     [cardLevel1, cardLevel2, cardLevel3, cardLevel4].forEach((card, idx) => {
-      if (idx + 1 === level) {
-        card.classList.add('active');
-      } else {
-        card.classList.remove('active');
+      if (card) {
+        if (idx + 1 === level) {
+          card.classList.add('active');
+        } else {
+          card.classList.remove('active');
+        }
       }
     });
 
-    // Siren Overlay
-    if (level === 3 || level === 4) {
-      sirenOverlay.classList.remove('hidden');
-    } else {
-      sirenOverlay.classList.add('hidden');
+    if (sirenOverlay) {
+      if (level === 3 || level === 4) {
+        sirenOverlay.classList.remove('hidden');
+      } else {
+        sirenOverlay.classList.add('hidden');
+      }
     }
   }
 
-  function updateStatsUI() {
-    const tMins = Math.floor(totalWorkSecondsToday / 60);
-    const tSecs = totalWorkSecondsToday % 60;
-    totalWorkTimeEl.textContent = `${String(tMins).padStart(2, '0')}:${String(tSecs).padStart(2, '0')}`;
-
-    breaksTakenCountEl.textContent = breaksTaken;
-    interventionsCountEl.textContent = interventionsCount;
-
-    // Health Score calculation (Healthy work to break ratio)
-    let score = 100 - (interventionsCount * 15) + (breaksTaken * 5);
-    score = Math.max(10, Math.min(100, score));
-    healthScoreEl.textContent = `${score}%`;
-  }
-
-  // ------------------------------------------------------------------
-  // LEVEL 4 OFFICER INTERVENTION MODAL LOGIC
-  // ------------------------------------------------------------------
-  function triggerOfficerIntervention() {
-    interventionsCount++;
-    officerInterventionModal.classList.remove('hidden');
-
-    const minsWorked = Math.floor(activeWorkSeconds / 60);
-    modalWorkDuration.textContent = `${minsWorked} minute${minsWorked !== 1 ? 's' : ''}`;
-
-    remainingBreakSeconds = currentConfig.breakDuration;
-    completeBreakBtn.disabled = true;
+  function triggerLockdownModal() {
+    if (officerInterventionModal) officerInterventionModal.classList.remove('hidden');
+    if (modalWorkDuration) modalWorkDuration.textContent = `${illegalWorkSeconds} seconds`;
+    remainingBreakSeconds = ALARM_THRESHOLDS.breakDuration;
 
     if (breakTimerInterval) clearInterval(breakTimerInterval);
 
@@ -413,9 +367,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (remainingBreakSeconds <= 0) {
         clearInterval(breakTimerInterval);
-        completeBreakBtn.disabled = false;
-        completeBreakText.textContent = '✅ Break Complete! Resume Work';
-        playChime(1000, 0.5);
       }
     }, 1000);
   }
@@ -423,89 +374,63 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateBreakModalTimerUI() {
     const bMins = Math.floor(remainingBreakSeconds / 60);
     const bSecs = remainingBreakSeconds % 60;
-    modalBreakTimer.textContent = `${String(bMins).padStart(2, '0')}:${String(bSecs).padStart(2, '0')}`;
-
-    if (remainingBreakSeconds > 0) {
-      completeBreakText.textContent = `Complete Break (Locked: ${String(bMins).padStart(2, '0')}:${String(bSecs).padStart(2, '0')})`;
-    }
+    if (modalBreakTimer) modalBreakTimer.textContent = `${String(bMins).padStart(2, '0')}:${String(bSecs).padStart(2, '0')}`;
   }
 
-  function completeBreak() {
-    officerInterventionModal.classList.add('hidden');
-    stopSiren();
-
-    breaksTaken++;
-    activeWorkSeconds = 0; // Reset continuous work timer
+  function resetToRest() {
+    if (officerInterventionModal) officerInterventionModal.classList.add('hidden');
+    illegalWorkSeconds = 0;
+    isWorkingNow = false;
     currentLevel = 1;
 
     updateLevelUI(1);
-    updateReadoutUI();
-    updateStatsUI();
+    updateUI();
   }
 
   // ------------------------------------------------------------------
-  // EVENT HANDLERS
+  // EVENT LISTENERS
   // ------------------------------------------------------------------
-  // Manual Take a Break
-  takeBreakBtn.addEventListener('click', () => {
-    if (activeWorkSeconds > 10) {
-      breaksTaken++;
-      activeWorkSeconds = 0;
-      currentLevel = 1;
-      stopSiren();
-      updateLevelUI(1);
-      updateReadoutUI();
-      updateStatsUI();
-      playChime(1200, 0.4);
-    }
-  });
+  if (testAlarmBtn) {
+    testAlarmBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playAyoooSound();
+      illegalWorkSeconds += 3;
+      evaluateLevel();
+      updateUI();
+    });
+  }
 
-  // Modal Complete Break Button
-  completeBreakBtn.addEventListener('click', () => {
-    completeBreak();
-  });
+  if (resetProcrastinationBtn) {
+    resetProcrastinationBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      resetToRest();
+    });
+  }
 
-  // Toggle Mode (Demo vs Real)
-  toggleModeBtn.addEventListener('click', () => {
-    isDemoMode = !isDemoMode;
-    currentConfig = isDemoMode ? THRESHOLDS.demo : THRESHOLDS.real;
+  if (completeBreakBtn) {
+    completeBreakBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      resetToRest();
+    });
+  }
 
-    modeText.textContent = currentConfig.name;
-    toggleModeBtn.querySelector('.dot').className = isDemoMode ? 'dot demo-active' : 'dot';
-
-    // Update Matrix Descriptions
-    rangeL1.textContent = currentConfig.labels.l1;
-    rangeL2.textContent = currentConfig.labels.l2;
-    rangeL3.textContent = currentConfig.labels.l3;
-    rangeL4.textContent = currentConfig.labels.l4;
-
-    // Reset continuous work for clean mode switch
-    activeWorkSeconds = 0;
-    currentLevel = 1;
-    stopSiren();
-    updateLevelUI(1);
-    updateReadoutUI();
-  });
-
-  // Toggle Sound
-  soundToggleBtn.addEventListener('click', () => {
-    soundMuted = !soundMuted;
-    if (soundMuted) {
-      soundOnIcon.classList.add('hidden');
-      soundOffIcon.classList.remove('hidden');
-      stopSiren();
-    } else {
-      soundOffIcon.classList.add('hidden');
-      soundOnIcon.classList.remove('hidden');
-      if (currentLevel === 3 || currentLevel === 4) {
-        startSiren();
+  if (soundToggleBtn) {
+    soundToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      soundMuted = !soundMuted;
+      if (soundMuted) {
+        if (soundOnIcon) soundOnIcon.classList.add('hidden');
+        if (soundOffIcon) soundOffIcon.classList.remove('hidden');
+        if (ayoooAudioTag) ayoooAudioTag.pause();
+      } else {
+        if (soundOffIcon) soundOffIcon.classList.add('hidden');
+        if (soundOnIcon) soundOnIcon.classList.remove('hidden');
+        playAyoooSound();
       }
-    }
-  });
+    });
+  }
 
-  // Initialize App
   startMainEngine();
   updateLevelUI(1);
-  updateReadoutUI();
-  updateStatsUI();
+  updateUI();
 });
